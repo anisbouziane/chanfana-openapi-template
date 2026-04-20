@@ -35,7 +35,7 @@ const openapi = fromHono(app, {
 		info: {
 			title: "My Awesome API",
 			version: "2.0.0",
-			description: "This is the documentation for my awesome APIIIII.",
+			description: "This is the documentation for my awesome new API.",
 		},
 	},
 });
