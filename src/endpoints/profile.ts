@@ -1,4 +1,4 @@
-import { contentJson, OpenAPIRoute } from "chanfana";
+import { ApiException, contentJson, OpenAPIRoute } from "chanfana";
 import { AppContext } from "../types";
 import { z } from "zod";
 
@@ -11,9 +11,7 @@ export class ProfileEndpoint extends OpenAPIRoute {
 		operationId: "get-profile",
 		request: {
 			query: z.object({
-				name: z.string().optional(),
-				email: z.string().email().optional(),
-				role: z.string().optional(),
+				name: z.string(),
 			}),
 		},
 		responses: {
@@ -34,7 +32,12 @@ export class ProfileEndpoint extends OpenAPIRoute {
 
 	public async handle(c: AppContext) {
 		const data = await this.getValidatedData<typeof this.schema>();
-		const nameParam = data.query?.name ?? "";
+		const nameParam = data.query?.name;
+
+		if (!nameParam) {
+			throw new ApiException(400, "The query parameter 'name' is required.");
+		}
+
 		const url = `${PROFILE_SERVICE_URL}${encodeURIComponent(nameParam)}`;
 
 		const response = await fetch(url, {
